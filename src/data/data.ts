@@ -42,8 +42,10 @@ interface CustomMap {
   [key: string]: any;
 }
 
-const colorsMap: CustomMap = { ident: "" };
+export const colorsMap: CustomMap = {};
 
 colorIdents.forEach((el) => {
   colorsMap[el.ident] = el.props.color;
 });
+
+console.log(Object.values(colorsMap)[Math.floor(Math.random() * 3)]);

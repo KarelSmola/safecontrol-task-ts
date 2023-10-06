@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import { columns, data } from "./data/data";
+import React, { useState } from "react";
+import { columns, data, colorsMap } from "./data/data";
 import { TableHead } from "./components/TableHead";
 import { SearchBar } from "./components/SearchBar";
 
@@ -13,26 +13,16 @@ export const App: React.FC = () => {
     setSearchText(text);
   };
 
-  const selectRow =
-    (
-      itemId: string,
-      item: {
-        id: string;
-        title: string;
-        description: string;
-        selected: boolean;
-      },
-    ) =>
-    () => {
-      const selectedRows = generatedData.map((item) => {
-        if (item.id === itemId) {
-          return { ...item, selected: !item.selected };
-        } else {
-          return item;
-        }
-      });
-      setGeneratedData(selectedRows);
-    };
+  const selectRow = (itemId: string) => () => {
+    const selectedRows = generatedData.map((item) => {
+      if (item.id === itemId) {
+        return { ...item, selected: !item.selected };
+      } else {
+        return item;
+      }
+    });
+    setGeneratedData(selectedRows);
+  };
 
   console.log(generatedData);
 
@@ -46,9 +36,13 @@ export const App: React.FC = () => {
           {generatedData.map((item) => (
             <tr
               className="table-row"
-              style={{ backgroundColor: item.selected ? "red" : "transparent" }}
+              style={{
+                backgroundColor: item.selected
+                  ? Object.values(colorsMap)[Math.floor(Math.random() * 3)]
+                  : "transparent",
+              }}
               key={item.id}
-              onClick={selectRow(item.id, item)}
+              onClick={selectRow(item.id)}
             >
               {columns.map((column) => {
                 const retypedItemObject = item as any;

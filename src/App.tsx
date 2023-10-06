@@ -24,7 +24,7 @@ export const App: React.FC = () => {
         <tbody>
           {generatedData.map((item) => (
             <tr className="table-row" key={item.id}>
-              {columns.map((column: string) => (
+              {columns.map((column) => (
                 <td key={column}>{item[column]}</td>
                 // <td className="table-cell" key={column}>
                 //   {column}

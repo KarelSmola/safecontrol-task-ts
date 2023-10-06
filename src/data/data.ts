@@ -1,4 +1,4 @@
-export const columns: string[] = ["id", "title", "description"];
+export const columns: any[] = ["id", "title", "description"];
 
 export const data = Array.from({ length: 10 }, (_, i) => {
   return {

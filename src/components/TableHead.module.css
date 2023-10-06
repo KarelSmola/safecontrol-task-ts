@@ -1,0 +1,9 @@
+.thead, .thead-column {
+border: 1px solid #000;
+
+}
+
+.thead-column {
+    padding: 1rem;
+
+}

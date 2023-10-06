@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { columns, data } from "./data/data";
 import { TableHead } from "./components/TableHead";
 import { SearchBar } from "./components/SearchBar";
@@ -6,14 +6,35 @@ import { SearchBar } from "./components/SearchBar";
 import { Wrapper } from "./components/UI/Wrapper";
 
 export const App: React.FC = () => {
+  const [generatedData, setGeneratedData] = useState(data);
   const [searchText, setSearchText] = useState("");
-
-  type Data = { id: string; title: string; description: string }[];
-  const generatedData: Data = data;
 
   const onSearchText = (text: string) => {
     setSearchText(text);
   };
+
+  const selectRow =
+    (
+      itemId: string,
+      item: {
+        id: string;
+        title: string;
+        description: string;
+        selected: boolean;
+      },
+    ) =>
+    () => {
+      const selectedRows = generatedData.map((item) => {
+        if (item.id === itemId) {
+          return { ...item, selected: !item.selected };
+        } else {
+          return item;
+        }
+      });
+      setGeneratedData(selectedRows);
+    };
+
+  console.log(generatedData);
 
   return (
     <Wrapper>
@@ -23,13 +44,20 @@ export const App: React.FC = () => {
         <TableHead />
         <tbody>
           {generatedData.map((item) => (
-            <tr className="table-row" key={item.id}>
-              {columns.map((column) => (
-                <td key={column}>{item[column]}</td>
-                // <td className="table-cell" key={column}>
-                //   {column}
-                // </td>
-              ))}
+            <tr
+              className="table-row"
+              style={{ backgroundColor: item.selected ? "red" : "transparent" }}
+              key={item.id}
+              onClick={selectRow(item.id, item)}
+            >
+              {columns.map((column) => {
+                const retypedItemObject = item as any;
+                return (
+                  <td className="table-cell" key={column}>
+                    {retypedItemObject[column]}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

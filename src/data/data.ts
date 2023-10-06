@@ -1,9 +1,49 @@
-export const columns: any[] = ["id", "title", "description"];
+const colorIdents = [
+  {
+    ident: "un",
+    props: {
+      color: "red",
+    },
+  },
+  {
+    ident: "deux",
+    props: {
+      color: "green",
+    },
+  },
+  {
+    ident: "trois",
+    props: {
+      color: "blue",
+    },
+  },
+];
 
-export const data = Array.from({ length: 10 }, (_, i) => {
+type CustomColumns = string[];
+export const columns: CustomColumns = ["id", "title", "description"];
+
+type Data = {
+  id: string;
+  title: string;
+  description: string;
+  selected: boolean;
+}[];
+
+export const data: Data = Array.from({ length: 10 }, (_, i) => {
   return {
     id: crypto.randomUUID(),
     title: `${Math.floor(Math.random() * 999)} title`,
     description: `${Math.floor(Math.random() * 999)} description`,
+    selected: false,
   };
+});
+
+interface CustomMap {
+  [key: string]: any;
+}
+
+const colorsMap: CustomMap = { ident: "" };
+
+colorIdents.forEach((el) => {
+  colorsMap[el.ident] = el.props.color;
 });

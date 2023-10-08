@@ -3,14 +3,11 @@ import { columns } from "../data/data";
 
 import classes from "./TableHead.module.css";
 
-// type TableHeadProps = {
-//   sortBy: (column: string) => string;
-// };
-export const TableHead: React.FC = () => {
-  const sortBy: (column: string) => void = (column: string) => {
-    console.log(column);
-  };
+type TableHeadProps = {
+  reguestSort: (column: string) => void;
+};
 
+export const TableHead: React.FC<TableHeadProps> = ({ reguestSort }) => {
   return (
     <thead className={classes.thead}>
       <tr className={classes["thead-row"]}>
@@ -19,7 +16,7 @@ export const TableHead: React.FC = () => {
             className={classes["thead-column"]}
             key={column}
             onClick={() => {
-              sortBy(column);
+              reguestSort(column);
             }}
           >
             {column}

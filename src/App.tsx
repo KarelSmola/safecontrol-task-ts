@@ -96,6 +96,21 @@ export const App: React.FC = () => {
     setColorMap((prevState) => !prevState);
   }, []);
 
+  // const changeColorsMap = () => {
+  //   const newColors: string[] = ["orangered", "pink", "navy"];
+  //
+  //   let colorsObj: {} = colorsMap;
+  //   let retypedColorsObj = colorsObj as any;
+  //
+  //   Object.keys(colorsObj).forEach((item) => {
+  //     retypedColorsObj[item] = newColors[Math.floor(Math.random() * 3)];
+  //   });
+  //
+  //   return colorMap
+  //     ? `${Object.values(colorsMap)[Math.floor(Math.random() * 3)]}`
+  //     : `${Object.values(colorsMap2)[Math.floor(Math.random() * 3)]}`;
+  // };
+
   const colors = colorMap
     ? `${Object.values(colorsMap)[Math.floor(Math.random() * 3)]}`
     : `${Object.values(colorsMap2)[Math.floor(Math.random() * 3)]}`;
@@ -107,6 +122,7 @@ export const App: React.FC = () => {
       <button onClick={toggleColors}>
         {colorMap ? "Color Map 1" : "Color Map 2"}
       </button>
+      {/*<button onClick={changeColorsMap}>Change colors</button>*/}
       <table className="table">
         <caption className="caption">Generated data</caption>
         <TableHead requestSort={requestSorting} />

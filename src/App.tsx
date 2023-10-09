@@ -1,47 +1,61 @@
-import React, { useMemo, useState } from "react";
-import { columns, data, colorsMap } from "./data/data";
-import { TableHead } from "./components/TableHead";
+import React, { useState, useMemo, useCallback } from "react";
+import { columns, data, colorsMap, colorsMap2 } from "./data/data";
+import { IDlist } from "./components/IDlist";
 import { SearchBar } from "./components/SearchBar";
+import { TableHead } from "./components/TableHead";
 
 import { Wrapper } from "./components/UI/Wrapper";
 
-export const App: React.FC = () => {
-  type SortConfig = {
-    direction: string;
-    sortBy: string;
-  };
+type SortConfig = {
+  direction: string;
+  sortBy: string;
+};
 
+export const App: React.FC = () => {
   const [generatedData, setGeneratedData] = useState(data);
   const [searchText, setSearchText] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+  const [colorMap, setColorMap] = useState(true);
 
-  const onSearchText = (text: string) => {
+  const onSearchText = useCallback((text: string) => {
     setSearchText(text);
-  };
+  }, []);
 
-  const selectRow = (itemId: string) => () => {
-    const selectedRows = generatedData.map((item) => {
-      if (item.id === itemId) {
-        return { ...item, selected: !item.selected };
-      } else {
-        return item;
+  const selectRow =
+    (selectedItem: {
+      id: string;
+      title: string;
+      description: string;
+      selected: boolean;
+    }) =>
+    () => {
+      const selectedRows = generatedData.map((curItem) => {
+        if (curItem.id === selectedItem.id) {
+          return !curItem.selected
+            ? { ...curItem, selected: true }
+            : { ...curItem, selected: false };
+        } else {
+          return curItem;
+        }
+      });
+      setGeneratedData(selectedRows);
+    };
+
+  const requestSorting: (sortBy: string) => void = useCallback(
+    (sortBy) => {
+      let direction = "ascending";
+      if (
+        sortConfig &&
+        sortConfig.sortBy === sortBy &&
+        sortConfig.direction === "ascending"
+      ) {
+        direction = "descending";
       }
-    });
-    setGeneratedData(selectedRows);
-  };
 
-  const reguestSorting: (sortBy: string) => void = (sortBy) => {
-    let direction = "ascending";
-    if (
-      sortConfig &&
-      sortConfig.sortBy === sortBy &&
-      sortConfig.direction === "ascending"
-    ) {
-      direction = "descending";
-    }
-
-    setSortConfig({ direction, sortBy });
-  };
+      setSortConfig({ direction, sortBy });
+    },
+    [sortConfig],
+  );
 
   const sortAndFilterData = useMemo(() => {
     let sortedAndFilteredItems = [...generatedData];
@@ -74,23 +88,33 @@ export const App: React.FC = () => {
     return sortedAndFilteredItems;
   }, [sortConfig, searchText, generatedData]);
 
+  const toggleColors = useCallback(() => {
+    setColorMap((prevState) => !prevState);
+  }, []);
+
+  const colors = colorMap
+    ? `${Object.values(colorsMap)[Math.floor(Math.random() * 3)]}`
+    : `${Object.values(colorsMap2)[Math.floor(Math.random() * 3)]}`;
+
   return (
     <Wrapper>
+      <IDlist items={generatedData} />
       <SearchBar searchText={searchText} onSearchText={onSearchText} />
+      <button onClick={toggleColors}>
+        {colorMap ? "Color Map 1" : "Color Map 2"}
+      </button>
       <table className="table">
         <caption className="caption">Generated data</caption>
-        <TableHead reguestSort={reguestSorting} />
+        <TableHead requestSort={requestSorting} />
         <tbody>
           {sortAndFilterData.map((item) => (
             <tr
               className="table-row"
               style={{
-                backgroundColor: item.selected
-                  ? Object.values(colorsMap)[Math.floor(Math.random() * 3)]
-                  : "transparent",
+                backgroundColor: item.selected ? colors : "transparent",
               }}
               key={item.id}
-              onClick={selectRow(item.id)}
+              onClick={selectRow(item)}
             >
               {columns.map((column) => {
                 const retypedItemObject = item as any;

@@ -4,10 +4,10 @@ import { columns } from "../data/data";
 import classes from "./TableHead.module.css";
 
 type TableHeadProps = {
-  reguestSort: (column: string) => void;
+  requestSort: (column: string) => void;
 };
 
-export const TableHead: React.FC<TableHeadProps> = ({ reguestSort }) => {
+export const TableHead: React.FC<TableHeadProps> = ({ requestSort }) => {
   return (
     <thead className={classes.thead}>
       <tr className={classes["thead-row"]}>
@@ -16,7 +16,7 @@ export const TableHead: React.FC<TableHeadProps> = ({ reguestSort }) => {
             className={classes["thead-column"]}
             key={column}
             onClick={() => {
-              reguestSort(column);
+              requestSort(column);
             }}
           >
             {column}

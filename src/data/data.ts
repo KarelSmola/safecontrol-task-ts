@@ -19,6 +19,27 @@ const colorIdents = [
   },
 ];
 
+const colorIdents2 = [
+  {
+    ident: "un",
+    props: {
+      color: "orangered",
+    },
+  },
+  {
+    ident: "deux",
+    props: {
+      color: "yellow",
+    },
+  },
+  {
+    ident: "trois",
+    props: {
+      color: "pink",
+    },
+  },
+];
+
 type CustomColumns = string[];
 export const columns: CustomColumns = ["id", "title", "description"];
 
@@ -47,3 +68,12 @@ export const colorsMap: CustomMap = {};
 colorIdents.forEach((el) => {
   colorsMap[el.ident] = el.props.color;
 });
+
+export const colorsMap2: CustomMap = {};
+
+colorIdents2.forEach((el) => {
+  colorsMap2[el.ident] = el.props.color;
+});
+
+console.log(colorsMap);
+console.log(colorsMap2);

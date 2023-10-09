@@ -74,6 +74,3 @@ export const colorsMap2: CustomMap = {};
 colorIdents2.forEach((el) => {
   colorsMap2[el.ident] = el.props.color;
 });
-
-console.log(colorsMap);
-console.log(colorsMap2);

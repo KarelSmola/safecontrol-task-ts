@@ -3,7 +3,6 @@ import { columns, data, colorsMap, colorsMap2 } from "./data/data";
 import { IDlist } from "./components/IDlist";
 import { SearchBar } from "./components/SearchBar";
 import { TableHead } from "./components/TableHead";
-
 import { Wrapper } from "./components/UI/Wrapper";
 
 type SortConfig = {
@@ -16,6 +15,11 @@ export const App: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [colorMap, setColorMap] = useState(true);
+
+  const IDtoShow = generatedData
+    .filter((item) => item.selected)
+    .map((item) => item.id)
+    .join(", ");
 
   const onSearchText = useCallback((text: string) => {
     setSearchText(text);
@@ -98,7 +102,7 @@ export const App: React.FC = () => {
 
   return (
     <Wrapper>
-      <IDlist items={generatedData} />
+      <IDlist IDtoShow={IDtoShow} />
       <SearchBar searchText={searchText} onSearchText={onSearchText} />
       <button onClick={toggleColors}>
         {colorMap ? "Color Map 1" : "Color Map 2"}

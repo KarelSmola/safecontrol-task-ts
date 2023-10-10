@@ -1,18 +1,31 @@
+enum Ident {
+  Un = 'un',
+  Deux = 'deux',
+  Trois = 'trois'
+}
+
+export enum Column {
+  Id = 'id',
+  Title = 'title',
+  Description = 'description'
+}
+
+
 const colorIdents = [
   {
-    ident: "un",
+    ident: Ident.Un,
     props: {
       color: "red",
     },
   },
   {
-    ident: "deux",
+    ident: Ident.Deux,
     props: {
       color: "green",
     },
   },
   {
-    ident: "trois",
+    ident: Ident.Trois,
     props: {
       color: "blue",
     },
@@ -21,47 +34,44 @@ const colorIdents = [
 
 const colorIdents2 = [
   {
-    ident: "un",
+    ident: Ident.Un,
     props: {
       color: "orangered",
     },
   },
   {
-    ident: "deux",
+    ident: Ident.Deux,
     props: {
       color: "yellow",
     },
   },
   {
-    ident: "trois",
+    ident: Ident.Trois,
     props: {
       color: "pink",
     },
   },
 ];
 
-type CustomColumns = string[];
-export const columns: CustomColumns = ["id", "title", "description"];
+export const columns = [Column.Id, Column.Title, Column.Description] as const;
 
-type Data = {
-  id: string;
-  title: string;
-  description: string;
-  selected: boolean;
-}[];
+
+type Data = Array<Record<Column, string> & {
+  ident: Ident
+}>;
 
 export const data: Data = Array.from({ length: 10 }, (_, i) => {
+  const idents = Object.values(Ident)
+
   return {
-    id: crypto.randomUUID(),
-    title: `${Math.floor(Math.random() * 999)} title`,
-    description: `${Math.floor(Math.random() * 999)} description`,
-    selected: false,
+    [Column.Id]: crypto.randomUUID(),
+    [Column.Title]: `${Math.floor(Math.random() * 999)} title`,
+    [Column.Description]: `${Math.floor(Math.random() * 999)} description`,
+    ident: idents[Math.floor(Math.random()*(idents.length))]
   };
 });
 
-interface CustomMap {
-  [key: string]: any;
-}
+export type CustomMap = Partial<Record<Ident, string>>
 
 export const colorsMap: CustomMap = {};
 

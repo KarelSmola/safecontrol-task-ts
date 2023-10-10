@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
-import { columns, data, colorsMap, colorsMap2 } from "./data/data";
+import { columns, data, colorsMap, colorsMap2, Column } from "./data/data";
 import { IDlist } from "./components/IDlist";
 import { SearchBar } from "./components/SearchBar";
 import { TableHead } from "./components/TableHead";
@@ -11,42 +11,17 @@ type SortConfig = {
 };
 
 export const App: React.FC = () => {
-  const [generatedData, setGeneratedData] = useState(data);
   const [searchText, setSearchText] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
-  const [colorMap, setColorMap] = useState(true);
-  const [selectedCell, setSelectedCell] = useState<
-    { itemId: string; column: string } | {}
-  >({});
+  const [colorMapType, setColorMapType] = useState(true);
+  const [selectedCell, setSelectedCell] = useState<Record<string, Partial<Record<Column, boolean>>>>({});
 
-  const IDtoShow = generatedData
-    .filter((item) => item.selected)
-    .map((item) => item.id)
-    .join(", ");
+  const colorMap = colorMapType ? colorsMap : colorsMap2
 
   const onSearchText = useCallback((text: string) => {
     setSearchText(text);
   }, []);
 
-  const selectRow =
-    (selectedItem: {
-      id: string;
-      title: string;
-      description: string;
-      selected: boolean;
-    }) =>
-    () => {
-      const selectedRows = generatedData.map((curItem) => {
-        if (curItem.id === selectedItem.id) {
-          return !curItem.selected
-            ? { ...curItem, selected: true }
-            : { ...curItem, selected: false };
-        } else {
-          return curItem;
-        }
-      });
-      setGeneratedData(selectedRows);
-    };
 
   const requestSorting: (sortBy: string) => void = useCallback(
     (sortBy) => {
@@ -65,29 +40,10 @@ export const App: React.FC = () => {
   );
 
   const sortAndFilterData = useMemo(() => {
-    let sortedAndFilteredItems = [...generatedData];
-
-    if (sortConfig !== null) {
-      const { sortBy } = sortConfig;
-
-      sortedAndFilteredItems.sort((a, b) => {
-        const retypedObject_a = a as any;
-        const retypedObject_b = b as any;
-
-        if (retypedObject_a[sortBy] < retypedObject_b[sortBy]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-
-        if (retypedObject_a[sortBy] > retypedObject_b[sortBy]) {
-          return sortConfig.direction === "descending" ? -1 : 1;
-        }
-
-        return 0;
-      });
-    }
+    let sortedAndFilteredItems = [...data];
 
     if (searchText.length) {
-      sortedAndFilteredItems = generatedData.filter((item) => {
+      sortedAndFilteredItems = sortedAndFilteredItems.filter((item) => {
         const retypedItem = item as any;
         let ret = false;
 
@@ -106,45 +62,69 @@ export const App: React.FC = () => {
         return ret;
       });
     }
-    //
+
+    if (sortConfig !== null) {
+      const { sortBy } = sortConfig;
+
+      sortedAndFilteredItems = sortedAndFilteredItems.sort((a, b) => {
+        const retypedObject_a = a as any;
+        const retypedObject_b = b as any;
+
+        if (retypedObject_a[sortBy] < retypedObject_b[sortBy]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+
+        if (retypedObject_a[sortBy] > retypedObject_b[sortBy]) {
+          return sortConfig.direction === "descending" ? -1 : 1;
+        }
+
+        return 0;
+      });
+    }
 
     return sortedAndFilteredItems;
-  }, [sortConfig, searchText, generatedData]);
+  }, [sortConfig, searchText]);
 
-  const selectCell = (column: string, itemId: string) => () => {
-    setSelectedCell({ itemId, column });
-  };
-  console.log(selectedCell);
+  const IDtoShow = useMemo(()=>{
+    const filteredItems = sortAndFilterData.filter(({id})=>{
+      if(selectedCell[id] && Object.values(selectedCell[id]).some(value=>value)){
+        return true
+      }
 
-  const toggleColors = useCallback(() => {
-    setColorMap((prevState) => !prevState);
+      return false
+    }) || []
+
+    return filteredItems.map(({id})=>id).join(', ')
+  }, [selectedCell, sortAndFilterData])
+
+  const selectCell = useCallback((column: Column, itemId: string) => () => {
+    setSelectedCell((state) => {
+      const newState = {...state}
+
+      if(!newState[itemId]) {
+        newState[itemId] = {}
+      }
+      newState[itemId] = {
+        ...newState[itemId],
+        [column]: !newState[itemId][column]
+      }
+
+      return newState
+    });
   }, []);
 
-  // const changeColorsMap = () => {
-  //   const newColors: string[] = ["orangered", "pink", "navy"];
-  //
-  //   let colorsObj: {} = colorsMap;
-  //   let retypedColorsObj = colorsObj as any;
-  //
-  //   Object.keys(colorsObj).forEach((item) => {
-  //     retypedColorsObj[item] = newColors[Math.floor(Math.random() * 3)];
-  //   });
-  //
-  //   return colorMap
-  //     ? `${Object.values(colorsMap)[Math.floor(Math.random() * 3)]}`
-  //     : `${Object.values(colorsMap2)[Math.floor(Math.random() * 3)]}`;
-  // };
+  console.log({selectedCell});
 
-  const colors = colorMap
-    ? `${Object.values(colorsMap)[Math.floor(Math.random() * 3)]}`
-    : `${Object.values(colorsMap2)[Math.floor(Math.random() * 3)]}`;
+  const toggleColors = useCallback(() => {
+    setColorMapType((prevState) => !prevState);
+  }, []);
 
   return (
     <Wrapper>
       <IDlist IDtoShow={IDtoShow} />
       <SearchBar searchText={searchText} onSearchText={onSearchText} />
       <button onClick={toggleColors}>
-        {colorMap ? "Color Map 1" : "Color Map 2"}
+        {colorMapType ? "Color Map 1" : "Color Map 2"}
       </button>
       {/*<button onClick={changeColorsMap}>Change colors</button>*/}
       <table className="table">
@@ -154,24 +134,18 @@ export const App: React.FC = () => {
           {sortAndFilterData.map((item) => (
             <tr
               className="table-row"
-              style={{
-                backgroundColor: item.selected ? colors : "transparent",
-              }}
               key={item.id}
-              onClick={selectRow(item)}
             >
-              {columns.map((column) => {
-                const retypedItemObject = item as any;
-                return (
+              {columns.map((column) =>
                   <td
                     className="table-cell"
+                    style={{backgroundColor: selectedCell[item.id]?.[column]?colorMap[item.ident]:'transparent'}}
                     key={column}
                     onClick={selectCell(column, item.id)}
                   >
-                    {retypedItemObject[column]}
+                    {item[column]}
                   </td>
-                );
-              })}
+              )}
             </tr>
           ))}
         </tbody>

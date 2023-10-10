@@ -15,6 +15,9 @@ export const App: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [colorMap, setColorMap] = useState(true);
+  const [selectedCell, setSelectedCell] = useState<
+    { itemId: string; column: string } | {}
+  >({});
 
   const IDtoShow = generatedData
     .filter((item) => item.selected)
@@ -85,12 +88,33 @@ export const App: React.FC = () => {
 
     if (searchText.length) {
       sortedAndFilteredItems = generatedData.filter((item) => {
-        return item.title.toLowerCase().startsWith(searchText.toLowerCase());
+        const retypedItem = item as any;
+        let ret = false;
+
+        columns.forEach((columnIdent) => {
+          if (
+            retypedItem[columnIdent]
+              .toLowerCase()
+              .trim()
+              .indexOf(searchText.toLowerCase()) > -1
+          ) {
+            ret = true;
+            return;
+          }
+        });
+
+        return ret;
       });
     }
+    //
 
     return sortedAndFilteredItems;
   }, [sortConfig, searchText, generatedData]);
+
+  const selectCell = (column: string, itemId: string) => () => {
+    setSelectedCell({ itemId, column });
+  };
+  console.log(selectedCell);
 
   const toggleColors = useCallback(() => {
     setColorMap((prevState) => !prevState);
@@ -139,7 +163,11 @@ export const App: React.FC = () => {
               {columns.map((column) => {
                 const retypedItemObject = item as any;
                 return (
-                  <td className="table-cell" key={column}>
+                  <td
+                    className="table-cell"
+                    key={column}
+                    onClick={selectCell(column, item.id)}
+                  >
                     {retypedItemObject[column]}
                   </td>
                 );

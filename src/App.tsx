@@ -6,6 +6,7 @@ import { SearchBar } from "./components/SearchBar";
 import { TableHead } from "./components/TableHead";
 import { Wrapper } from "./components/UI/Wrapper";
 import { MyState } from "./features/itemSlice";
+import { selectCell } from "./features/itemSlice";
 
 export const App: React.FC = () => {
   const [searchText, setSearchText] = useState("");
@@ -14,7 +15,10 @@ export const App: React.FC = () => {
     Record<string, Partial<Record<Column, boolean>>>
   >({});
 
+  const dispatch = useDispatch();
+
   const itemStore = useSelector((store: MyState) => store);
+  console.log(itemStore);
 
   const colorMap = colorMapType ? colorsMap : colorsMap2;
 
@@ -86,24 +90,24 @@ export const App: React.FC = () => {
     return filteredItems.map(({ id }) => id).join(", ");
   }, [selectedCell, sortAndFilterData]);
 
-  const selectCell = useCallback(
-    (column: Column, itemId: string) => () => {
-      setSelectedCell((state) => {
-        const newState = { ...state };
-
-        if (!newState[itemId]) {
-          newState[itemId] = {};
-        }
-        newState[itemId] = {
-          ...newState[itemId],
-          [column]: !newState[itemId][column],
-        };
-
-        return newState;
-      });
-    },
-    [],
-  );
+  // const selectCell = useCallback(
+  //   (column: Column, itemId: string) => () => {
+  //     setSelectedCell((state) => {
+  //       const newState = { ...state };
+  //
+  //       if (!newState[itemId]) {
+  //         newState[itemId] = {};
+  //       }
+  //       newState[itemId] = {
+  //         ...newState[itemId],
+  //         [column]: !newState[itemId][column],
+  //       };
+  //
+  //       return newState;
+  //     });
+  //   },
+  //   [],
+  // );
 
   const toggleColors = useCallback(() => {
     setColorMapType((prevState) => !prevState);
@@ -133,7 +137,9 @@ export const App: React.FC = () => {
                       : "transparent",
                   }}
                   key={column}
-                  onClick={selectCell(column, item.id)}
+                  onClick={() => {
+                    dispatch(selectCell(item.id, column));
+                  }}
                 >
                   {item[column]}
                 </td>

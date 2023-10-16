@@ -3,11 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface MyState {
   sortBy: string;
   direction: boolean;
+  selectedCells: {};
 }
 
 const initialState: MyState = {
   sortBy: "",
   direction: false,
+  selectedCells: {},
 };
 
 const itemSlice = createSlice({
@@ -18,8 +20,29 @@ const itemSlice = createSlice({
       state.sortBy = action.payload;
       state.direction = !state.direction;
     },
+    selectCell: {
+      prepare(itemId, column) {
+        return { payload: { itemId, column } };
+      },
+
+      reducer(state, action) {
+        const { itemId, column } = action.payload;
+        const newState = { ...state.selectedCells } as any;
+
+        if (!newState[itemId]) {
+          newState[itemId] = {};
+        }
+
+        newState[itemId] = {
+          ...newState[itemId],
+          [column]: !newState[itemId][column],
+        };
+
+        state.selectedCells = { ...newState };
+      },
+    },
   },
 });
 
-export const { sortingBy } = itemSlice.actions;
+export const { sortingBy, selectCell } = itemSlice.actions;
 export default itemSlice.reducer;

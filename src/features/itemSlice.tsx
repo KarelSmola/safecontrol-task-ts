@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface MyState {
   sortBy: string;
@@ -25,7 +25,7 @@ const itemSlice = createSlice({
         return { payload: { itemId, column } };
       },
 
-      reducer(state, action) {
+      reducer(state, action: any) {
         const { itemId, column } = action.payload;
         const newState = { ...state.selectedCells } as any;
 

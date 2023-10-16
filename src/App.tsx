@@ -11,13 +11,14 @@ import { selectCell } from "./features/itemSlice";
 export const App: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [colorMapType, setColorMapType] = useState(true);
-  const [selectedCell, setSelectedCell] = useState<
-    Record<string, Partial<Record<Column, boolean>>>
-  >({});
+  // const [selectedCell, setSelectedCell] = useState<
+  //   Record<string, Partial<Record<Column, boolean>>>
+  // >({});
 
   const dispatch = useDispatch();
 
-  const itemStore = useSelector((store: MyState) => store);
+  const itemStore = useSelector((store: MyState) => store) as any;
+
   console.log(itemStore);
 
   const colorMap = colorMapType ? colorsMap : colorsMap2;
@@ -78,8 +79,8 @@ export const App: React.FC = () => {
     const filteredItems =
       sortAndFilterData.filter(({ id }) => {
         if (
-          selectedCell[id] &&
-          Object.values(selectedCell[id]).some((value) => value)
+          itemStore.selectedCells[id] &&
+          Object.values(itemStore.selectedCells[id]).some((value) => value)
         ) {
           return true;
         }
@@ -88,7 +89,7 @@ export const App: React.FC = () => {
       }) || [];
 
     return filteredItems.map(({ id }) => id).join(", ");
-  }, [selectedCell, sortAndFilterData]);
+  }, [itemStore.selectedCells, sortAndFilterData]);
 
   // const selectCell = useCallback(
   //   (column: Column, itemId: string) => () => {
@@ -132,7 +133,7 @@ export const App: React.FC = () => {
                 <td
                   className="table-cell"
                   style={{
-                    backgroundColor: selectedCell[item.id]?.[column]
+                    backgroundColor: itemStore.selectedCells[item.id]?.[column]
                       ? colorMap[item.ident]
                       : "transparent",
                   }}

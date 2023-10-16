@@ -14,14 +14,15 @@ export const App: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [colorMapType, setColorMapType] = useState(true);
-  const [selectedCell, setSelectedCell] = useState<Record<string, Partial<Record<Column, boolean>>>>({});
+  const [selectedCell, setSelectedCell] = useState<
+    Record<string, Partial<Record<Column, boolean>>>
+  >({});
 
-  const colorMap = colorMapType ? colorsMap : colorsMap2
+  const colorMap = colorMapType ? colorsMap : colorsMap2;
 
   const onSearchText = useCallback((text: string) => {
     setSearchText(text);
   }, []);
-
 
   const requestSorting: (sortBy: string) => void = useCallback(
     (sortBy) => {
@@ -85,35 +86,40 @@ export const App: React.FC = () => {
     return sortedAndFilteredItems;
   }, [sortConfig, searchText]);
 
-  const IDtoShow = useMemo(()=>{
-    const filteredItems = sortAndFilterData.filter(({id})=>{
-      if(selectedCell[id] && Object.values(selectedCell[id]).some(value=>value)){
-        return true
-      }
+  const IDtoShow = useMemo(() => {
+    const filteredItems =
+      sortAndFilterData.filter(({ id }) => {
+        if (
+          selectedCell[id] &&
+          Object.values(selectedCell[id]).some((value) => value)
+        ) {
+          return true;
+        }
 
-      return false
-    }) || []
+        return false;
+      }) || [];
 
-    return filteredItems.map(({id})=>id).join(', ')
-  }, [selectedCell, sortAndFilterData])
+    return filteredItems.map(({ id }) => id).join(", ");
+  }, [selectedCell, sortAndFilterData]);
 
-  const selectCell = useCallback((column: Column, itemId: string) => () => {
-    setSelectedCell((state) => {
-      const newState = {...state}
+  const selectCell = useCallback(
+    (column: Column, itemId: string) => () => {
+      setSelectedCell((state) => {
+        const newState = { ...state };
 
-      if(!newState[itemId]) {
-        newState[itemId] = {}
-      }
-      newState[itemId] = {
-        ...newState[itemId],
-        [column]: !newState[itemId][column]
-      }
+        if (!newState[itemId]) {
+          newState[itemId] = {};
+        }
+        newState[itemId] = {
+          ...newState[itemId],
+          [column]: !newState[itemId][column],
+        };
 
-      return newState
-    });
-  }, []);
-
-  console.log({selectedCell});
+        return newState;
+      });
+    },
+    [],
+  );
 
   const toggleColors = useCallback(() => {
     setColorMapType((prevState) => !prevState);
@@ -132,20 +138,21 @@ export const App: React.FC = () => {
         <TableHead requestSort={requestSorting} />
         <tbody>
           {sortAndFilterData.map((item) => (
-            <tr
-              className="table-row"
-              key={item.id}
-            >
-              {columns.map((column) =>
-                  <td
-                    className="table-cell"
-                    style={{backgroundColor: selectedCell[item.id]?.[column]?colorMap[item.ident]:'transparent'}}
-                    key={column}
-                    onClick={selectCell(column, item.id)}
-                  >
-                    {item[column]}
-                  </td>
-              )}
+            <tr className="table-row" key={item.id}>
+              {columns.map((column) => (
+                <td
+                  className="table-cell"
+                  style={{
+                    backgroundColor: selectedCell[item.id]?.[column]
+                      ? colorMap[item.ident]
+                      : "transparent",
+                  }}
+                  key={column}
+                  onClick={selectCell(column, item.id)}
+                >
+                  {item[column]}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>

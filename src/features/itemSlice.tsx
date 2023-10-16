@@ -1,13 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  item: "",
+export interface MyState {
+  sortBy: string;
+  direction: boolean;
+}
+
+const initialState: MyState = {
+  sortBy: "",
+  direction: false,
 };
 
 const itemSlice = createSlice({
   name: "item",
   initialState,
-  reducers: {},
+  reducers: {
+    sortingBy(state, action) {
+      state.sortBy = action.payload;
+      state.direction = !state.direction;
+    },
+  },
 });
 
+export const { sortingBy } = itemSlice.actions;
 export default itemSlice.reducer;

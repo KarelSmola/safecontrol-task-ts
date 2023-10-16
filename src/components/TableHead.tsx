@@ -1,13 +1,13 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { columns } from "../data/data";
+import { sortingBy } from "../features/itemSlice";
 
 import classes from "./TableHead.module.css";
 
-type TableHeadProps = {
-  requestSort: (column: string) => void;
-};
+export const TableHead: React.FC = () => {
+  const dispatch = useDispatch();
 
-export const TableHead: React.FC<TableHeadProps> = ({ requestSort }) => {
   return (
     <thead className={classes.thead}>
       <tr className={classes["thead-row"]}>
@@ -15,9 +15,7 @@ export const TableHead: React.FC<TableHeadProps> = ({ requestSort }) => {
           <th
             className={classes["thead-column"]}
             key={column}
-            onClick={() => {
-              requestSort(column);
-            }}
+            onClick={() => dispatch(sortingBy(column))}
           >
             {column}
           </th>

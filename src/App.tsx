@@ -1,20 +1,19 @@
 import React, { useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { columns, data, colorsMap, colorsMap2 } from "./data/data";
+
 import { IDlist } from "./components/IDlist";
 import { SearchBar } from "./components/SearchBar";
 import { TableHead } from "./components/TableHead";
 import { Wrapper } from "./components/UI/Wrapper";
-import { MyState } from "./features/itemSlice";
+
 import { selectCell, toggleColorMap } from "./features/itemSlice";
 
-export const App: React.FC = () => {
-  // const [colorMapType, setColorMapType] = useState(true);
-
+export const App = () => {
   const dispatch = useDispatch();
 
   const { sortBy, direction, selectedCells, searchText, colorMapType } =
-    useSelector((store: MyState) => store) as any;
+    useSelector((store: any) => store.item) as any;
 
   const colorMap = colorMapType ? colorsMap : colorsMap2;
 
@@ -89,7 +88,6 @@ export const App: React.FC = () => {
       <button onClick={toggleColors}>
         {colorMapType ? "Color Map 1" : "Color Map 2"}
       </button>
-      {/*<button onClick={changeColorsMap}>Change colors</button>*/}
       <table className="table">
         <caption className="caption">Generated data</caption>
         <TableHead />

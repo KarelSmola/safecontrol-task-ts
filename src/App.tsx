@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { columns, data, colorsMap, colorsMap2 } from "./data/data";
 import { IDlist } from "./components/IDlist";
@@ -6,15 +6,15 @@ import { SearchBar } from "./components/SearchBar";
 import { TableHead } from "./components/TableHead";
 import { Wrapper } from "./components/UI/Wrapper";
 import { MyState } from "./features/itemSlice";
-import { selectCell } from "./features/itemSlice";
+import { selectCell, toggleColorMap } from "./features/itemSlice";
 
 export const App: React.FC = () => {
-  const [colorMapType, setColorMapType] = useState(true);
+  // const [colorMapType, setColorMapType] = useState(true);
 
   const dispatch = useDispatch();
 
-  const itemStore = useSelector((store: MyState) => store) as any;
-  const { sortBy, direction, selectedCells, searchText } = itemStore;
+  const { sortBy, direction, selectedCells, searchText, colorMapType } =
+    useSelector((store: MyState) => store) as any;
 
   const colorMap = colorMapType ? colorsMap : colorsMap2;
 
@@ -79,8 +79,8 @@ export const App: React.FC = () => {
   }, [selectedCells, sortAndFilterData]);
 
   const toggleColors = useCallback(() => {
-    setColorMapType((prevState) => !prevState);
-  }, []);
+    dispatch(toggleColorMap());
+  }, [dispatch]);
 
   return (
     <Wrapper>
@@ -92,7 +92,6 @@ export const App: React.FC = () => {
       {/*<button onClick={changeColorsMap}>Change colors</button>*/}
       <table className="table">
         <caption className="caption">Generated data</caption>
-        {/*<TableHead requestSort={requestSorting} />*/}
         <TableHead />
         <tbody>
           {sortAndFilterData.map((item) => (
@@ -101,7 +100,7 @@ export const App: React.FC = () => {
                 <td
                   className="table-cell"
                   style={{
-                    backgroundColor: itemStore.selectedCells[item.id]?.[column]
+                    backgroundColor: selectedCells[item.id]?.[column]
                       ? colorMap[item.ident]
                       : "transparent",
                   }}

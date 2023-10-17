@@ -5,6 +5,7 @@ export interface MyState {
   direction: boolean;
   selectedCells: {};
   searchText: string;
+  colorMapType: boolean;
 }
 
 const initialState: MyState = {
@@ -12,6 +13,7 @@ const initialState: MyState = {
   direction: false,
   selectedCells: {},
   searchText: "",
+  colorMapType: true,
 };
 
 const itemSlice = createSlice({
@@ -46,8 +48,12 @@ const itemSlice = createSlice({
     searchingText(state, action) {
       state.searchText = action.payload;
     },
+    toggleColorMap(state) {
+      state.colorMapType = !state.colorMapType;
+    },
   },
 });
 
-export const { sortingBy, selectCell, searchingText } = itemSlice.actions;
+export const { sortingBy, selectCell, searchingText, toggleColorMap } =
+  itemSlice.actions;
 export default itemSlice.reducer;

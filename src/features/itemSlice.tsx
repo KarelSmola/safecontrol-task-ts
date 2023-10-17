@@ -1,15 +1,17 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface MyState {
   sortBy: string;
   direction: boolean;
   selectedCells: {};
+  searchText: string;
 }
 
 const initialState: MyState = {
   sortBy: "",
   direction: false,
   selectedCells: {},
+  searchText: "",
 };
 
 const itemSlice = createSlice({
@@ -41,8 +43,11 @@ const itemSlice = createSlice({
         state.selectedCells = { ...newState };
       },
     },
+    searchingText(state, action) {
+      state.searchText = action.payload;
+    },
   },
 });
 
-export const { sortingBy, selectCell } = itemSlice.actions;
+export const { sortingBy, selectCell, searchingText } = itemSlice.actions;
 export default itemSlice.reducer;

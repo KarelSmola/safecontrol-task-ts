@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { columns, data, colorsMap, colorsMap2, Column } from "./data/data";
+import { columns, data, colorsMap, colorsMap2 } from "./data/data";
 import { IDlist } from "./components/IDlist";
 import { SearchBar } from "./components/SearchBar";
 import { TableHead } from "./components/TableHead";
@@ -9,23 +9,14 @@ import { MyState } from "./features/itemSlice";
 import { selectCell } from "./features/itemSlice";
 
 export const App: React.FC = () => {
-  const [searchText, setSearchText] = useState("");
   const [colorMapType, setColorMapType] = useState(true);
-  // const [selectedCell, setSelectedCell] = useState<
-  //   Record<string, Partial<Record<Column, boolean>>>
-  // >({});
 
   const dispatch = useDispatch();
 
   const itemStore = useSelector((store: MyState) => store) as any;
-
-  console.log(itemStore);
+  const { sortBy, direction, selectedCells, searchText } = itemStore;
 
   const colorMap = colorMapType ? colorsMap : colorsMap2;
-
-  const onSearchText = useCallback((text: string) => {
-    setSearchText(text);
-  }, []);
 
   const sortAndFilterData = useMemo(() => {
     let sortedAndFilteredItems = [...data];
@@ -51,21 +42,17 @@ export const App: React.FC = () => {
       });
     }
 
-    if (itemStore !== null) {
+    if (sortBy !== null) {
       sortedAndFilteredItems = sortedAndFilteredItems.sort((a, b) => {
         const retypedObject_a = a as any;
         const retypedObject_b = b as any;
 
-        if (
-          retypedObject_a[itemStore.sortBy] < retypedObject_b[itemStore.sortBy]
-        ) {
-          return itemStore.direction ? -1 : 1;
+        if (retypedObject_a[sortBy] < retypedObject_b[sortBy]) {
+          return direction ? -1 : 1;
         }
 
-        if (
-          retypedObject_a[itemStore.sortBy] > retypedObject_b[itemStore.sortBy]
-        ) {
-          return !itemStore.direction ? -1 : 1;
+        if (retypedObject_a[sortBy] > retypedObject_b[sortBy]) {
+          return !direction ? -1 : 1;
         }
 
         return 0;
@@ -73,14 +60,14 @@ export const App: React.FC = () => {
     }
 
     return sortedAndFilteredItems;
-  }, [itemStore, searchText]);
+  }, [searchText, sortBy, direction]);
 
   const IDtoShow = useMemo(() => {
     const filteredItems =
       sortAndFilterData.filter(({ id }) => {
         if (
-          itemStore.selectedCells[id] &&
-          Object.values(itemStore.selectedCells[id]).some((value) => value)
+          selectedCells[id] &&
+          Object.values(selectedCells[id]).some((value) => value)
         ) {
           return true;
         }
@@ -89,26 +76,7 @@ export const App: React.FC = () => {
       }) || [];
 
     return filteredItems.map(({ id }) => id).join(", ");
-  }, [itemStore.selectedCells, sortAndFilterData]);
-
-  // const selectCell = useCallback(
-  //   (column: Column, itemId: string) => () => {
-  //     setSelectedCell((state) => {
-  //       const newState = { ...state };
-  //
-  //       if (!newState[itemId]) {
-  //         newState[itemId] = {};
-  //       }
-  //       newState[itemId] = {
-  //         ...newState[itemId],
-  //         [column]: !newState[itemId][column],
-  //       };
-  //
-  //       return newState;
-  //     });
-  //   },
-  //   [],
-  // );
+  }, [selectedCells, sortAndFilterData]);
 
   const toggleColors = useCallback(() => {
     setColorMapType((prevState) => !prevState);
@@ -117,7 +85,7 @@ export const App: React.FC = () => {
   return (
     <Wrapper>
       <IDlist IDtoShow={IDtoShow} />
-      <SearchBar searchText={searchText} onSearchText={onSearchText} />
+      <SearchBar />
       <button onClick={toggleColors}>
         {colorMapType ? "Color Map 1" : "Color Map 2"}
       </button>

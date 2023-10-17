@@ -1,15 +1,14 @@
 enum Ident {
-  Un = 'un',
-  Deux = 'deux',
-  Trois = 'trois'
+  Un = "un",
+  Deux = "deux",
+  Trois = "trois",
 }
 
 export enum Column {
-  Id = 'id',
-  Title = 'title',
-  Description = 'description'
+  Id = "id",
+  Title = "title",
+  Description = "description",
 }
-
 
 const colorIdents = [
   {
@@ -55,23 +54,24 @@ const colorIdents2 = [
 
 export const columns = [Column.Id, Column.Title, Column.Description] as const;
 
-
-type Data = Array<Record<Column, string> & {
-  ident: Ident
-}>;
+type Data = Array<
+  Record<Column, string> & {
+    ident: Ident;
+  }
+>;
 
 export const data: Data = Array.from({ length: 10 }, (_, i) => {
-  const idents = Object.values(Ident)
+  const idents = Object.values(Ident);
 
   return {
     [Column.Id]: crypto.randomUUID(),
     [Column.Title]: `${Math.floor(Math.random() * 999)} title`,
     [Column.Description]: `${Math.floor(Math.random() * 999)} description`,
-    ident: idents[Math.floor(Math.random()*(idents.length))]
+    ident: idents[Math.floor(Math.random() * idents.length)],
   };
 });
 
-export type CustomMap = Partial<Record<Ident, string>>
+export type CustomMap = Partial<Record<Ident, string>>;
 
 export const colorsMap: CustomMap = {};
 

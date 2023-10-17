@@ -1,17 +1,14 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { MyState, searchingText } from "../features/itemSlice";
 
 import classes from "./SearchBar.module.css";
 
-type SearBarProps = {
-  searchText: string;
-  onSearchText: any;
-};
-export const SearchBar: React.FC<SearBarProps> = ({
-  searchText,
-  onSearchText,
-}) => {
+export const SearchBar = () => {
+  const searchText = useSelector((store: MyState) => store.searchText) as any;
+  const dispatch = useDispatch();
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearchText(e.target.value);
+    dispatch(searchingText(e.target.value));
   };
 
   return (

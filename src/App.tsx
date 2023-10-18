@@ -7,7 +7,7 @@ import { SearchBar } from "./components/SearchBar";
 import { TableHead } from "./components/TableHead";
 import { Wrapper } from "./components/UI/Wrapper";
 
-import { selectCell, toggleColorMap } from "./features/itemSlice";
+import { selectCell, toggleColorMap } from "./redux/item/itemSlice";
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -104,7 +104,7 @@ export const App = () => {
                   }}
                   key={column}
                   onClick={() => {
-                    dispatch(selectCell(item.id, column));
+                    dispatch(selectCell({itemId: item.id, column}));
                   }}
                 >
                   {item[column]}

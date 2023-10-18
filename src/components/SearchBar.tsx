@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { MyState, searchingText } from "../features/itemSlice";
+import { searchingText } from "../redux/item/itemSlice";
+import { selectSearchText } from "../redux/item/selectors";
 
 import classes from "./SearchBar.module.css";
 
 export const SearchBar = () => {
-  const searchText = useSelector((store: MyState) => store.searchText) as any;
+  const searchText = useSelector(selectSearchText)
 
   const dispatch = useDispatch();
 

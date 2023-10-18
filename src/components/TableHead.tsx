@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { columns } from "../data/data";
 
-import { sortingBy } from "../features/itemSlice";
+import { sortingBy } from "../redux/item/itemSlice";
 
 import classes from "./TableHead.module.css";
 

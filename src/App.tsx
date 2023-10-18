@@ -7,13 +7,23 @@ import { SearchBar } from "./components/SearchBar";
 import { TableHead } from "./components/TableHead";
 import { Wrapper } from "./components/UI/Wrapper";
 
+import {
+  selectSelectedCells,
+  selectSortBy,
+  selectDirection,
+  selectSearchText,
+  selectColorMapType,
+} from "./redux/item/selectors";
 import { selectCell, toggleColorMap } from "./redux/item/itemSlice";
 
 export const App = () => {
   const dispatch = useDispatch();
 
-  const { sortBy, direction, selectedCells, searchText, colorMapType } =
-    useSelector((store: any) => store.item) as any;
+  const selectedCells = useSelector(selectSelectedCells);
+  const sortBy = useSelector(selectSortBy);
+  const direction = useSelector(selectDirection);
+  const searchText = useSelector(selectSearchText);
+  const colorMapType = useSelector(selectColorMapType);
 
   const colorMap = colorMapType ? colorsMap : colorsMap2;
 
@@ -104,7 +114,7 @@ export const App = () => {
                   }}
                   key={column}
                   onClick={() => {
-                    dispatch(selectCell({itemId: item.id, column}));
+                    dispatch(selectCell({ itemId: item.id, column }));
                   }}
                 >
                   {item[column]}

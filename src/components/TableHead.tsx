@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { columns } from "../data/data";
+import { columns, Column } from "../data/data";
 
 import { sortingBy } from "../redux/item/itemSlice";
 
@@ -9,6 +9,13 @@ import classes from "./TableHead.module.css";
 export const TableHead = () => {
   const dispatch = useDispatch();
 
+  const sortBy = useCallback(
+    (column: Column) => () => {
+      dispatch(sortingBy(column));
+    },
+    [dispatch],
+  );
+
   return (
     <thead className={classes.thead}>
       <tr className={classes["thead-row"]}>
@@ -16,7 +23,7 @@ export const TableHead = () => {
           <th
             className={classes["thead-column"]}
             key={column}
-            onClick={() => dispatch(sortingBy(column))}
+            onClick={sortBy(column)}
           >
             {column}
           </th>

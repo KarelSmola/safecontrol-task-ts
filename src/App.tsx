@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { columns, data, colorsMap, colorsMap2 } from "./data/data";
+import { columns, data, colorsMap, colorsMap2, Column } from "./data/data";
 
 import { IDlist } from "./components/IDlist";
 import { SearchBar } from "./components/SearchBar";
@@ -91,6 +91,13 @@ export const App = () => {
     dispatch(toggleColorMap());
   }, [dispatch]);
 
+  const touchCell = useCallback(
+    (itemId: string, column: Column) => () => {
+      dispatch(selectCell({ itemId, column }));
+    },
+    [dispatch],
+  );
+
   return (
     <Wrapper>
       <IDlist IDtoShow={IDtoShow} />
@@ -113,9 +120,7 @@ export const App = () => {
                       : "transparent",
                   }}
                   key={column}
-                  onClick={() => {
-                    dispatch(selectCell({ itemId: item.id, column }));
-                  }}
+                  onClick={touchCell(item.id, column)}
                 >
                   {item[column]}
                 </td>

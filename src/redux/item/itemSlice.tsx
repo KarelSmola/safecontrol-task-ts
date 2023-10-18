@@ -21,22 +21,24 @@ export const itemSlice = createSlice({
   name: "item",
   initialState,
   reducers: {
-    sortingBy(state, action) {
+    sortingBy(state, action: PayloadAction<string>) {
       state.sortBy = action.payload;
       state.direction = !state.direction;
     },
-    selectCell: (state, action: PayloadAction<{itemId: string, column: Column}>) => {
-        const { itemId, column } = action.payload;
-
-        if (!state.selectedCells[itemId]) {
-          state.selectedCells[itemId] = {
-            [column]: true
-          };
-        }
-        else{
-          state.selectedCells[itemId][column] = !state.selectedCells[itemId][column]
-        }
-      },
+    selectCell: (
+      state,
+      action: PayloadAction<{ itemId: string; column: Column }>,
+    ) => {
+      const { itemId, column } = action.payload;
+      if (!state.selectedCells[itemId]) {
+        state.selectedCells[itemId] = {
+          [column]: true,
+        };
+      } else {
+        state.selectedCells[itemId][column] =
+          !state.selectedCells[itemId][column];
+      }
+    },
 
     searchingText(state, action: PayloadAction<string>) {
       state.searchText = action.payload;
@@ -47,4 +49,5 @@ export const itemSlice = createSlice({
   },
 });
 
-export const { sortingBy, selectCell, searchingText, toggleColorMap } = itemSlice.actions;
+export const { sortingBy, selectCell, searchingText, toggleColorMap } =
+  itemSlice.actions;
